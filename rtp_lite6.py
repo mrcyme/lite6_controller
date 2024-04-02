@@ -10,7 +10,7 @@ import time
 import math
 
 MODES = ["simulation"]
-LITE6 = rtb.models.URDF.LITE6()
+LITE6 = rtb.models.URDF.Lite6()
 LITE6.q = LITE6.qz
 
 
@@ -53,7 +53,6 @@ def jacobian_i_k_optimisation(q, v, v_max=1.2):
 
 
 def move_to(dest, dt, gain=1, treshold=0.01, modes=["simulation"]):
-    dest = LITE6.fkine(dest)
     if "simulation" in modes:
         axes = sg.Axes(length=0.1, pose=dest)
         env.add(axes)
@@ -75,7 +74,14 @@ def move_to(dest, dt, gain=1, treshold=0.01, modes=["simulation"]):
             
 dest = [50, 0, 16, 14, 7, 0]
 dest = degrees_to_radians(dest)
-move_to(dest, 0.05, gain=1, treshold=0.01, modes=MODES)
+tep = LITE6.fkine(dest)
+move_to(tep, 0.05, gain=1, treshold=0.01, modes=MODES)
 # Uncomment to stop the browser tab from closing
 #env.hold()
+# %%
+import roboticstoolbox as rtb
+lite6 = rtb.models.URDF.Lite6()                # instantiate robot model
+print(lite6)
+print(lite6.fkine(lite6.qz))
+
 # %%

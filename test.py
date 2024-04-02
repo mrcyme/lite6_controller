@@ -7,6 +7,7 @@ import spatialmath as sm
 import spatialgeometry as sg
 from scipy.spatial.transform import Rotation as R
 from pydrake.solvers import MathematicalProgram, Solve
+import time
 
 
 env = swift.Swift()
@@ -111,9 +112,11 @@ env.add(axes)
 dt = 0.05
 arrived = False
 while not arrived:
-    v, arrived = rtb.p_servo(lite6.fkine(lite6.q), Tep, gain=10, threshold=0.01)
+    v, arrived = rtb.p_servo(lite6.fkine(lite6.q), Tep, gain=1, threshold=0.01)
+    print(v)
     #lite6.qd = jacobian_i_k_pi(lite6.q, v, dt)
     qd = jacobian_i_k_optimisation(lite6.q, v, v_max=1)[1]
+    time.sleep(dt)
     lite6.qd = qd
     env.step(dt)
 
@@ -125,5 +128,10 @@ for _ in range(100):, randn
 # Uncomment to stop the browser tab from closing
 env.hold()
 
+
+# %%
+import roboticstoolbox as rtb
+lite6 = rtb.models.URDF.Lite6()
+lite6.plot(lite6.qz)
 
 # %%
